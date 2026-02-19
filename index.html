@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUPERSACOS – Empaques Flexibles de Polipropileno</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c8102e;
+    --red-dark: #a00c23;
+    --blue: #003087;
+    --blue-dark: #00235e;
+    --blue-light: #0044bb;
+    --white: #ffffff;
+    --gray: #f4f4f4;
+    --gray-mid: #cccccc;
+    --text: #1a1a1a;
+    --text-muted: #666;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  h1,h2,h3,h4 { font-family: 'Barlow Condensed', sans-serif; }
+
+  /* ─── NAVBAR ─── */
+  #navbar {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    background: rgba(255,255,255,0.97);
+    border-bottom: 3px solid var(--red);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 70px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.12);
+    transition: background .3s, box-shadow .3s;
+  }
+  #navbar.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.2); }
+
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem; font-weight: 900;
+    letter-spacing: -1px; color: var(--blue);
+    text-decoration: none;
+  }
+  .logo span { color: var(--red); }
+
+  nav { display: flex; gap: 8px; align-items: center; }
+  nav a {
+    font-size: 0.9rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--blue); text-decoration: none;
+    padding: 8px 14px; border-radius: 3px;
+    transition: background .2s, color .2s;
+  }
+  nav a:hover { background: var(--red); color: white; }
+  nav .cta-btn {
+    background: var(--red); color: white; padding: 8px 20px;
+    border-radius: 3px; margin-left: 10px;
+  }
+  nav .cta-btn:hover { background: var(--red-dark); color: white; }
+
+  .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; }
+  .hamburger span { width: 25px; height: 2px; background: var(--blue); display: block; transition: .3s; }
+
+  /* ─── HERO SLIDER ─── */
+  #hero {
+    height: 100vh; min-height: 620px;
+    position: relative; overflow: hidden; margin-top: 70px;
+  }
+
+  .slides { display: flex; height: 100%; transition: transform 0.8s cubic-bezier(0.77,0,0.18,1); }
+
+  .slide {
+    min-width: 100%; height: 100%; position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(0,48,135,0.75) 0%, rgba(0,0,0,0.45) 100%);
+  }
+  .slide-content {
+    position: relative; z-index: 2; text-align: center;
+    max-width: 860px; padding: 0 30px; color: white;
+  }
+  .slide-tag {
+    display: inline-block; background: var(--red);
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; padding: 5px 16px; margin-bottom: 22px;
+  }
+  .slide-content h1 {
+    font-size: clamp(2.2rem, 5vw, 4.2rem); font-weight: 900;
+    line-height: 1.05; text-transform: uppercase; letter-spacing: -0.01em;
+    margin-bottom: 22px; text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .slide-content p {
+    font-size: clamp(1rem, 1.8vw, 1.2rem); font-weight: 300;
+    margin-bottom: 36px; opacity: 0.9; max-width: 620px; margin-left: auto; margin-right: auto;
+  }
+  .btn-hero { display: inline-block; background: var(--red); color: white;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none;
+    padding: 14px 38px; border: 2px solid var(--red);
+    transition: background .3s, color .3s; margin: 0 8px;
+  }
+  .btn-hero:hover { background: transparent; color: white; }
+  .btn-hero.outline { background: transparent; border-color: white; }
+  .btn-hero.outline:hover { background: white; color: var(--blue); }
+
+  .slider-dots { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 10; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.4); cursor: pointer; transition: .3s; }
+  .dot.active { background: var(--red); transform: scale(1.3); }
+
+  .slider-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    color: white; font-size: 1.5rem; width: 50px; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; transition: background .3s; user-select: none;
+  }
+  .slider-arrow:hover { background: var(--red); }
+  .slider-prev { left: 24px; }
+  .slider-next { right: 24px; }
+
+  /* ─── SECTION STYLES ─── */
+  section { padding: 80px 0; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 30px; }
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3rem); font-weight: 900;
+    text-transform: uppercase; letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .section-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 600px; line-height: 1.7; }
+  .accent-line { width: 56px; height: 4px; background: var(--red); margin-bottom: 24px; }
+  .accent-line.center { margin-left: auto; margin-right: auto; }
+
+  .btn {
+    display: inline-block; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; text-decoration: none;
+    padding: 13px 34px; transition: all .3s; cursor: pointer; border: none;
+  }
+  .btn-red { background: var(--red); color: white; }
+  .btn-red:hover { background: var(--red-dark); }
+  .btn-blue { background: var(--blue); color: white; }
+  .btn-blue:hover { background: var(--blue-dark); }
+  .btn-outline-white { background: transparent; border: 2px solid white; color: white; }
+  .btn-outline-white:hover { background: white; color: var(--blue); }
+
+  /* ─── ABOUT BAND (RED) ─── */
+  #about-band {
+    background: var(--red); color: white; padding: 60px 0;
+  }
+  #about-band .container { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+  #about-band h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900; text-transform: uppercase; margin-bottom: 14px; }
+  #about-band p { font-size: 1.05rem; line-height: 1.7; opacity: 0.92; }
+
+  /* ─── STATS SECTION (BLUE) ─── */
+  #stats {
+    background: var(--blue); color: white; padding: 80px 0;
+  }
+  #stats .container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 900;
+    line-height: 1; color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .stat-number span { color: var(--red); }
+  .stat-label { font-size: 0.95rem; opacity: 0.8; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .stats-img { position: relative; }
+  .stats-img img { width: 100%; height: 380px; object-fit: cover; }
+  .stats-img::before {
+    content: ''; position: absolute; top: -10px; left: -10px;
+    width: 60%; height: 60%; background: var(--red); z-index: -1;
+  }
+
+  /* ─── PROMISE ─── */
+  #promise { background: var(--gray); text-align: center; padding: 80px 0; }
+  .promise-box {
+    background: white; max-width: 780px; margin: 0 auto;
+    padding: 60px 50px; border-top: 5px solid var(--red);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+  }
+  #promise h2 { color: var(--blue); margin-bottom: 20px; }
+  #promise p { font-size: 1.05rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 34px; }
+
+  /* ─── INDUSTRIES ─── */
+  #industries { padding: 80px 0; }
+  #industries .section-header { text-align: center; margin-bottom: 50px; }
+  .industries-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  }
+  .industry-card {
+    position: relative; overflow: hidden; cursor: pointer;
+    aspect-ratio: 4/3;
+  }
+  .industry-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; display: block; }
+  .industry-card:hover img { transform: scale(1.08); }
+  .industry-card-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,48,135,0.9), transparent);
+    color: white; padding: 30px 16px 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .industry-card::after {
+    content: ''; position: absolute; inset: 0;
+    border: 3px solid var(--red); opacity: 0; transition: opacity .3s;
+  }
+  .industry-card:hover::after { opacity: 1; }
+
+  /* ─── BRANDS CAROUSEL ─── */
+  #brands { background: var(--gray); padding: 60px 0; }
+  #brands .section-header { text-align: center; margin-bottom: 40px; }
+  .brands-track-wrap { overflow: hidden; position: relative; }
+  .brands-track { display: flex; gap: 30px; animation: scrollBrands 18s linear infinite; width: max-content; }
+  .brands-track:hover { animation-play-state: paused; }
+  .brand-logo {
+    width: 180px; height: 80px; background: white;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--gray-mid); flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1.3rem;
+    font-weight: 700; color: var(--blue); text-transform: uppercase;
+    letter-spacing: 0.05em; transition: box-shadow .3s;
+  }
+  .brand-logo:hover { box-shadow: 0 4px 20px rgba(0,48,135,0.15); }
+  @keyframes scrollBrands {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── BUSINESS MODEL ─── */
+  #model { background: var(--blue); color: white; padding: 80px 0; }
+  #model .section-header { text-align: center; margin-bottom: 50px; }
+  #model .section-title { color: white; }
+  .model-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 50px; }
+  .model-card { text-align: center; padding: 30px 20px; background: rgba(255,255,255,0.06); border-top: 3px solid var(--red); }
+  .model-icon {
+    width: 70px; height: 70px; background: var(--red); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 1.8rem;
+  }
+  .model-card h3 { font-size: 1.3rem; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+  .model-card p { font-size: 0.9rem; opacity: 0.8; line-height: 1.6; }
+  #model .center { text-align: center; }
+
+  /* ─── FACILITIES ─── */
+  #facilities { padding: 0; }
+  .facilities-inner {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 500px;
+  }
+  .facilities-img { position: relative; overflow: hidden; }
+  .facilities-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .facilities-text {
+    background: white; display: flex; align-items: center;
+    padding: 70px 60px;
+  }
+  .facilities-text .section-title { color: var(--blue); }
+  .facilities-text p { font-size: 1rem; line-height: 1.8; color: var(--text-muted); margin-bottom: 30px; }
+
+  /* ─── CATALOG ─── */
+  #catalog { padding: 80px 0; }
+  #catalog .section-header { text-align: center; margin-bottom: 50px; }
+  .catalog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .catalog-card {
+    border: 1px solid #e8e8e8; overflow: hidden;
+    transition: box-shadow .3s, transform .3s;
+  }
+  .catalog-card:hover { box-shadow: 0 10px 40px rgba(0,0,0,0.12); transform: translateY(-4px); }
+  .catalog-card img { width: 100%; height: 220px; object-fit: cover; display: block; }
+  .catalog-card-body { padding: 22px 20px; }
+  .catalog-card-body h3 {
+    font-size: 1.2rem; font-weight: 700; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .catalog-card-body p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 18px; }
+  .btn-sm { padding: 9px 22px; font-size: 0.85rem; }
+
+  /* ─── NEWS ─── */
+  #news { background: var(--gray); padding: 80px 0; }
+  #news .section-header { text-align: center; margin-bottom: 50px; }
+  .news-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .news-card { background: white; overflow: hidden; transition: box-shadow .3s; }
+  .news-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+  .news-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .news-card-body { padding: 24px 22px; }
+  .news-tag {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red); margin-bottom: 10px;
+  }
+  .news-card-body h3 {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1.2rem; font-weight: 700;
+    color: var(--blue); line-height: 1.3; margin-bottom: 10px;
+  }
+  .news-card-body p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+  .news-date { font-size: 0.8rem; color: var(--gray-mid); margin-top: 14px; }
+
+  /* ─── CONTACT ─── */
+  #contact { background: var(--blue); color: white; padding: 80px 0; }
+  #contact .container { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; }
+  #contact .section-title { color: white; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; opacity: 0.85; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+    color: white; padding: 13px 16px; font-family: 'Barlow', sans-serif; font-size: 0.95rem;
+    outline: none; transition: border .3s;
+  }
+  .form-group input::placeholder, .form-group textarea::placeholder { opacity: 0.5; }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--red); }
+  .form-group textarea { height: 130px; resize: vertical; }
+
+  .contact-info h3 {
+    font-size: 1.5rem; font-weight: 700; text-transform: uppercase;
+    margin-bottom: 30px; margin-top: 20px;
+  }
+  .contact-item { display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start; }
+  .contact-item-icon {
+    width: 44px; height: 44px; background: var(--red); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  }
+  .contact-item-text { font-size: 0.92rem; line-height: 1.6; opacity: 0.9; }
+  .contact-item-text strong { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; margin-bottom: 2px; }
+
+  /* ─── MAP ─── */
+  #map-section { height: 380px; }
+  #map-section iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  /* ─── FOOTER ─── */
+  footer { background: #0a0f1e; color: rgba(255,255,255,0.7); padding: 60px 0 30px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 50px; }
+  .footer-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 900; color: white; margin-bottom: 16px; }
+  .footer-logo span { color: var(--red); }
+  footer p { font-size: 0.9rem; line-height: 1.7; }
+  .footer-col h4 {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: white; margin-bottom: 20px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--red);
+  }
+  .footer-col a { display: block; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; margin-bottom: 10px; transition: color .2s; }
+  .footer-col a:hover { color: var(--red); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.82rem;
+  }
+
+  /* ─── WHATSAPP ─── */
+  #wa-btn {
+    position: fixed; bottom: 28px; right: 28px; z-index: 999;
+    width: 60px; height: 60px; background: #25D366; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 24px rgba(37,211,102,0.4); text-decoration: none;
+    animation: waPulse 2.5s ease-in-out infinite;
+    transition: transform .3s;
+  }
+  #wa-btn:hover { transform: scale(1.1); }
+  #wa-btn svg { width: 30px; height: 30px; }
+  @keyframes waPulse {
+    0%,100% { box-shadow: 0 6px 24px rgba(37,211,102,0.4); }
+    50% { box-shadow: 0 6px 40px rgba(37,211,102,0.7); }
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .fade-up {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-up.delay-1 { transition-delay: 0.1s; }
+  .fade-up.delay-2 { transition-delay: 0.2s; }
+  .fade-up.delay-3 { transition-delay: 0.3s; }
+  .fade-up.delay-4 { transition-delay: 0.4s; }
+
+  /* ─── MOBILE NAV ─── */
+  @media (max-width: 900px) {
+    .hamburger { display: flex; }
+    nav { display: none; position: absolute; top: 70px; left: 0; right: 0; background: white; flex-direction: column; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    nav.open { display: flex; }
+    #navbar { padding: 0 20px; }
+    .industries-grid { grid-template-columns: repeat(2,1fr); }
+    .catalog-grid { grid-template-columns: repeat(2,1fr); }
+    .news-grid { grid-template-columns: 1fr; }
+    .model-grid { grid-template-columns: repeat(2,1fr); }
+    .stats-grid { grid-template-columns: repeat(3,1fr); gap: 20px; }
+    #stats .container { grid-template-columns: 1fr; }
+    .stats-img { display: none; }
+    #about-band .container { grid-template-columns: 1fr; text-align: center; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    #contact .container { grid-template-columns: 1fr; }
+    .facilities-inner { grid-template-columns: 1fr; }
+    .facilities-text { padding: 50px 30px; }
+  }
+  @media (max-width: 600px) {
+    .industries-grid { grid-template-columns: 1fr 1fr; }
+    .catalog-grid { grid-template-columns: 1fr; }
+    .model-grid { grid-template-columns: 1fr; }
+    .promise-box { padding: 40px 24px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header id="navbar">
+  <a href="#" class="logo">SUPER<span>SACOS</span></a>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+  <nav id="nav-menu">
+    <a href="#inicio">Inicio</a>
+    <a href="#about-band">Nosotros</a>
+    <a href="#catalog">Nuestros Productos</a>
+    <a href="#contact">Contacto</a>
+    <a href="#contact" class="cta-btn">Cotizar</a>
+  </nav>
+</header>
+
+<!-- HERO SLIDER -->
+<section id="hero" id="inicio">
+  <div class="slides" id="slides">
+    <!-- Slide 1 -->
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&q=80" alt="Planta industrial">
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Líderes en Empaques Flexibles</div>
+        <h1>Diseño y Fabricación de Empaques de Polipropileno</h1>
+        <p>Soluciones de empaque industrial de alta calidad para los mercados más exigentes del mundo.</p>
+        <a href="#catalog" class="btn-hero">Nuestros Productos</a>
+        <a href="#contact" class="btn-hero outline">Solicitar Cotización</a>
+      </div>
+    </div>
+    <!-- Slide 2 -->
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80" alt="Super Sacos">
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Super Sacos FIBC</div>
+        <h1>Super Sacos de Alta Resistencia para la Industria</h1>
+        <p>Fabricados bajo estándares internacionales con capacidades desde 500 hasta 2,000 kg.</p>
+        <a href="#catalog" class="btn-hero">Conoce Más</a>
+        <a href="#contact" class="btn-hero outline">Contactar Asesor</a>
+      </div>
+    </div>
+    <!-- Slide 3 -->
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1565793979478-3f5b6e2da8e5?w=1920&q=80" alt="Exportación global">
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">Presencia Global</div>
+        <h1>Exportamos a 24 Países en Todos los Continentes</h1>
+        <p>25 años de experiencia respaldando a más de 350 clientes en las industrias más importantes.</p>
+        <a href="#stats" class="btn-hero">Ver Estadísticas</a>
+        <a href="#contact" class="btn-hero outline">Hablar con Ventas</a>
+      </div>
+    </div>
+  </div>
+  <button class="slider-arrow slider-prev" id="prev">&#8249;</button>
+  <button class="slider-arrow slider-next" id="next">&#8250;</button>
+  <div class="slider-dots" id="dots">
+    <div class="dot active" data-index="0"></div>
+    <div class="dot" data-index="1"></div>
+    <div class="dot" data-index="2"></div>
+  </div>
+</section>
+
+<!-- ABOUT BAND (RED) -->
+<section id="about-band">
+  <div class="container">
+    <div>
+      <h2>Más de 25 años fabricando soluciones de empaque para el mundo</h2>
+      <p>SUPERSACOS es una empresa mexicana especializada en el diseño, fabricación y distribución de empaques flexibles de polipropileno. Con tecnología de punta y un equipo altamente calificado, ofrecemos productos que cumplen con los más estrictos estándares de calidad internacionales.</p>
+    </div>
+    <div>
+      <a href="#stats" class="btn btn-blue">Acerca de SUPERSACOS</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS SECTION (BLUE) -->
+<section id="stats">
+  <div class="container">
+    <div>
+      <div class="accent-line" style="background:var(--red)"></div>
+      <h2 class="section-title fade-up">Trayectoria que habla por sí sola</h2>
+      <p class="section-sub fade-up delay-1" style="color:rgba(255,255,255,0.7)">Nuestra experiencia y compromiso con la calidad nos han posicionado como líderes en el mercado global de empaques flexibles de polipropileno.</p>
+      <div class="stats-grid" style="margin-top: 50px;">
+        <div class="stat-item fade-up delay-1">
+          <div class="stat-number">25<span>+</span></div>
+          <div class="stat-label">Años de<br>Experiencia</div>
+        </div>
+        <div class="stat-item fade-up delay-2">
+          <div class="stat-number">24</div>
+          <div class="stat-label">Países de<br>Exportación</div>
+        </div>
+        <div class="stat-item fade-up delay-3">
+          <div class="stat-number">350<span>+</span></div>
+          <div class="stat-label">Clientes<br>Satisfechos</div>
+        </div>
+      </div>
+    </div>
+    <div class="stats-img fade-up delay-2">
+      <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80" alt="Planta de producción">
+    </div>
+  </div>
+</section>
+
+<!-- PROMISE -->
+<section id="promise">
+  <div class="container">
+    <div class="promise-box fade-up">
+      <div class="accent-line center"></div>
+      <h2 class="section-title" style="color:var(--blue)">Nuestra Promesa de Calidad</h2>
+      <p>Cada producto que fabricamos pasa por rigurosos controles de calidad para garantizar que cumple con las especificaciones técnicas requeridas y los estándares internacionales. Nos comprometemos con la entrega puntual, la precisión en cada pedido y el soporte técnico continuo.</p>
+      <p style="margin-bottom: 30px;">Nuestra infraestructura industrial en Apodaca, Nuevo León, cuenta con tecnología de última generación que nos permite atender pedidos de gran volumen sin comprometer la calidad.</p>
+      <a href="#contact" class="btn btn-red">Solicita Una Cotización</a>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section id="industries">
+  <div class="container">
+    <div class="section-header">
+      <div class="accent-line center"></div>
+      <h2 class="section-title fade-up">Industrias que Servimos</h2>
+      <p class="section-sub fade-up delay-1" style="margin: 0 auto; text-align:center;">Nuestros empaques flexibles están presentes en los sectores industriales más importantes.</p>
+    </div>
+    <div class="industries-grid">
+      <div class="industry-card fade-up delay-1">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80" alt="Construcción">
+        <div class="industry-card-label">Construcción</div>
+      </div>
+      <div class="industry-card fade-up delay-2">
+        <img src="https://images.unsplash.com/photo-1578496781379-7dcfb995293d?w=600&q=80" alt="Minería">
+        <div class="industry-card-label">Minería</div>
+      </div>
+      <div class="industry-card fade-up delay-3">
+        <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&q=80" alt="Agricultura">
+        <div class="industry-card-label">Agricultura</div>
+      </div>
+      <div class="industry-card fade-up delay-4">
+        <img src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=600&q=80" alt="Química">
+        <div class="industry-card-label">Química</div>
+      </div>
+      <div class="industry-card fade-up delay-1">
+        <img src="https://images.unsplash.com/photo-1565793979478-3f5b6e2da8e5?w=600&q=80" alt="Alimentos">
+        <div class="industry-card-label">Alimentos</div>
+      </div>
+      <div class="industry-card fade-up delay-2">
+        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80" alt="Farmacéutica">
+        <div class="industry-card-label">Farmacéutica</div>
+      </div>
+      <div class="industry-card fade-up delay-3">
+        <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="Petroquímica">
+        <div class="industry-card-label">Petroquímica</div>
+      </div>
+      <div class="industry-card fade-up delay-4">
+        <img src="https://images.unsplash.com/photo-1569025743873-ea3a9ade89f9?w=600&q=80" alt="Logística">
+        <div class="industry-card-label">Logística</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDS CAROUSEL -->
+<section id="brands">
+  <div class="container">
+    <div class="section-header">
+      <div class="accent-line center"></div>
+      <h2 class="section-title fade-up" style="text-align:center;">Nuestras Marcas y Grupo</h2>
+    </div>
+  </div>
+  <div class="brands-track-wrap">
+    <div class="brands-track">
+      <div class="brand-logo">SUPERSACOS</div>
+      <div class="brand-logo">JumboFlux</div>
+      <div class="brand-logo">PolyMex</div>
+      <div class="brand-logo">FlexTex</div>
+      <div class="brand-logo">AgroSac</div>
+      <div class="brand-logo">MineraFlex</div>
+      <!-- Duplicado para loop infinito -->
+      <div class="brand-logo">SUPERSACOS</div>
+      <div class="brand-logo">JumboFlux</div>
+      <div class="brand-logo">PolyMex</div>
+      <div class="brand-logo">FlexTex</div>
+      <div class="brand-logo">AgroSac</div>
+      <div class="brand-logo">MineraFlex</div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS MODEL -->
+<section id="model">
+  <div class="container">
+    <div class="section-header">
+      <div class="accent-line center" style="margin-bottom: 20px;"></div>
+      <h2 class="section-title fade-up" style="text-align:center; color:white;">Nuestro Modelo de Negocio</h2>
+      <p class="fade-up delay-1" style="text-align:center; color:rgba(255,255,255,0.7); max-width:600px; margin: 0 auto 50px;">Cuatro pilares que garantizan resultados excepcionales para nuestros clientes.</p>
+    </div>
+    <div class="model-grid">
+      <div class="model-card fade-up delay-1">
+        <div class="model-icon">⚙️</div>
+        <h3>Soluciones a la Medida</h3>
+        <p>Diseñamos cada empaque según las especificaciones exactas de tu producto y proceso industrial.</p>
+      </div>
+      <div class="model-card fade-up delay-2">
+        <div class="model-icon">🏆</div>
+        <h3>Calidad Mundial</h3>
+        <p>Certificaciones ISO y estándares internacionales que avalan la durabilidad de nuestros productos.</p>
+      </div>
+      <div class="model-card fade-up delay-3">
+        <div class="model-icon">🌍</div>
+        <h3>Alcance Global</h3>
+        <p>Red de distribución que llega a 24 países con tiempos de entrega optimizados.</p>
+      </div>
+      <div class="model-card fade-up delay-4">
+        <div class="model-icon">💬</div>
+        <h3>Soporte Técnico</h3>
+        <p>Equipo especializado disponible para asesorar en la selección y uso correcto de empaques.</p>
+      </div>
+    </div>
+    <div class="center">
+      <a href="#contact" class="btn btn-red">Hablar con un Especialista</a>
+    </div>
+  </div>
+</section>
+
+<!-- FACILITIES -->
+<section id="facilities" style="padding:0;">
+  <div class="facilities-inner">
+    <div class="facilities-img">
+      <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&q=80" alt="Instalaciones">
+    </div>
+    <div class="facilities-text">
+      <div>
+        <div class="accent-line"></div>
+        <h2 class="section-title fade-up">Nuestras Instalaciones</h2>
+        <p class="fade-up delay-1">Contamos con una planta de producción de más de 15,000 m² ubicada estratégicamente en Apodaca, Nuevo León — corazón industrial de México — equipada con la más moderna maquinaria para la fabricación de empaques flexibles.</p>
+        <p class="fade-up delay-2">Nuestras instalaciones cuentan con laboratorio de control de calidad, área de diseño y desarrollo, almacenes climatizados y puerto de carga eficiente para exportaciones internacionales.</p>
+        <a href="#contact" class="btn btn-blue fade-up delay-3">Visitar Instalaciones</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="container">
+    <div class="section-header" style="text-align:center;">
+      <div class="accent-line center"></div>
+      <h2 class="section-title fade-up">Nuestro Catálogo de Productos</h2>
+      <p class="section-sub fade-up delay-1" style="margin:0 auto; text-align:center;">Línea completa de empaques flexibles para cada necesidad industrial.</p>
+    </div>
+    <div class="catalog-grid" style="margin-top:50px;">
+      <div class="catalog-card fade-up delay-1">
+        <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?w=600&q=80" alt="Super Sacos">
+        <div class="catalog-card-body">
+          <h3>Super Sacos FIBC</h3>
+          <p>Contenedores flexibles de gran capacidad para transporte y almacenamiento a granel. Desde 500 hasta 2,000 kg.</p>
+          <a href="#contact" class="btn btn-red btn-sm">Ver Productos</a>
+        </div>
+      </div>
+      <div class="catalog-card fade-up delay-2">
+        <img src="https://images.unsplash.com/photo-1568254183919-78a4f43a2877?w=600&q=80" alt="Sacos de Polipropileno">
+        <div class="catalog-card-body">
+          <h3>Sacos de Polipropileno</h3>
+          <p>Sacos tejidos de polipropileno para industria agrícola, química y de construcción. Alta resistencia a la humedad.</p>
+          <a href="#contact" class="btn btn-red btn-sm">Ver Productos</a>
+        </div>
+      </div>
+      <div class="catalog-card fade-up delay-3">
+        <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80" alt="Fundas y Liners">
+        <div class="catalog-card-body">
+          <h3>Fundas y Liners</h3>
+          <p>Recubrimientos interiores para contenedores que protegen tu producto de la humedad y contaminación.</p>
+          <a href="#contact" class="btn btn-red btn-sm">Ver Productos</a>
+        </div>
+      </div>
+      <div class="catalog-card fade-up delay-4">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80" alt="Eslingas y Accesorios">
+        <div class="catalog-card-body">
+          <h3>Eslingas y Accesorios</h3>
+          <p>Sistemas de izaje y manejo seguro para super sacos. Eslingas de lazo simple, cruzadas y en U con diferentes certificaciones de carga.</p>
+          <a href="#contact" class="btn btn-red btn-sm">Ver Productos</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section id="news">
+  <div class="container">
+    <div class="section-header" style="text-align:center;">
+      <div class="accent-line center"></div>
+      <h2 class="section-title fade-up">Noticias y Novedades</h2>
+      <p class="section-sub fade-up delay-1" style="margin: 0 auto; text-align:center;">Lo más reciente de SUPERSACOS y el sector de empaques industriales.</p>
+    </div>
+    <div class="news-grid" style="margin-top:50px;">
+      <div class="news-card fade-up delay-1">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80" alt="Noticia 1">
+        <div class="news-card-body">
+          <div class="news-tag">Innovación</div>
+          <h3>Nueva línea de Super Sacos con certificación FDA para industria alimentaria</h3>
+          <p>SUPERSACOS lanza su nueva línea de empaques aptos para contacto con alimentos, cumpliendo con normativa internacional.</p>
+          <div class="news-date">Enero 2025</div>
+        </div>
+      </div>
+      <div class="news-card fade-up delay-2">
+        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&q=80" alt="Noticia 2">
+        <div class="news-card-body">
+          <div class="news-tag">Expansión</div>
+          <h3>SUPERSACOS abre operaciones de distribución en Colombia y Perú</h3>
+          <p>La empresa expande su presencia en Latinoamérica con nuevos centros de distribución en dos países clave.</p>
+          <div class="news-date">Febrero 2025</div>
+        </div>
+      </div>
+      <div class="news-card fade-up delay-3">
+        <img src="https://images.unsplash.com/photo-1565793979478-3f5b6e2da8e5?w=600&q=80" alt="Noticia 3">
+        <div class="news-card-body">
+          <div class="news-tag">Sostenibilidad</div>
+          <h3>Programa de reciclaje de empaques de polipropileno post-consumo</h3>
+          <p>Iniciativa de economía circular para recuperar y reciclar empaques usados, reduciendo el impacto ambiental.</p>
+          <div class="news-date">Marzo 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div>
+      <div class="accent-line"></div>
+      <h2 class="section-title fade-up">Contáctanos</h2>
+      <p class="fade-up delay-1" style="color:rgba(255,255,255,0.8); margin-bottom:34px; line-height:1.7;">Estamos listos para atender tu solicitud de cotización o resolver cualquier duda sobre nuestros productos y servicios.</p>
+      <div class="fade-up delay-2">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" placeholder="Tu nombre y apellidos">
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" placeholder="correo@empresa.com">
+        </div>
+        <div class="form-group">
+          <label>Empresa</label>
+          <input type="text" placeholder="Nombre de tu empresa">
+        </div>
+        <div class="form-group">
+          <label>Producto de interés</label>
+          <select>
+            <option>Selecciona un producto</option>
+            <option>Super Sacos FIBC</option>
+            <option>Sacos de Polipropileno</option>
+            <option>Fundas y Liners</option>
+            <option>Eslingas y Accesorios</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Mensaje</label>
+          <textarea placeholder="Describe tu requerimiento, cantidades, especificaciones…"></textarea>
+        </div>
+        <button class="btn btn-red">Enviar Solicitud</button>
+      </div>
+    </div>
+    <div>
+      <div class="contact-info fade-up delay-2">
+        <div class="accent-line"></div>
+        <h3>Información de Contacto</h3>
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <div class="contact-item-text">
+            <strong>Dirección</strong>
+            Parque Industrial Apodaca<br>Apodaca, Nuevo León, México C.P. 66600
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <div class="contact-item-text">
+            <strong>México</strong>
+            +52 (81) 8386-0000
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <div class="contact-item-text">
+            <strong>USA / Internacional</strong>
+            +1 (956) 500-0000
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">✉️</div>
+          <div class="contact-item-text">
+            <strong>Email</strong>
+            ventas@SUPERSACOS.com.mx<br>export@SUPERSACOS.com.mx
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">🕐</div>
+          <div class="contact-item-text">
+            <strong>Horario de Atención</strong>
+            Lunes a Viernes: 8:00 AM – 6:00 PM<br>Sábado: 9:00 AM – 1:00 PM
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<div id="map-section">
+  <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3592.9!2d-100.1879!3d25.7876!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662ecdac2c1d5d1%3A0x4a8d9c8b78f3e1c2!2sApodaca%2C%20Nuevo%20Le%C3%B3n!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" allowfullscreen="" loading="lazy"></iframe>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">SUPER<span>SACOS</span></div>
+        <p>Líderes en el diseño y fabricación de empaques flexibles de polipropileno. Más de 25 años exportando calidad mexicana a 24 países.</p>
+        <div style="margin-top:20px; display:flex; gap:12px;">
+          <a href="#" style="width:36px;height:36px;background:var(--red);display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;font-size:0.9rem;">f</a>
+          <a href="#" style="width:36px;height:36px;background:var(--red);display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;font-size:0.9rem;">in</a>
+          <a href="#" style="width:36px;height:36px;background:var(--red);display:flex;align-items:center;justify-content:center;color:white;text-decoration:none;font-size:0.9rem;">yt</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <a href="#about-band">Sobre Nosotros</a>
+        <a href="#facilities">Instalaciones</a>
+        <a href="#model">Modelo de Negocio</a>
+        <a href="#news">Noticias</a>
+        <a href="#">Trabaja con Nosotros</a>
+      </div>
+      <div class="footer-col">
+        <h4>Productos</h4>
+        <a href="#catalog">Super Sacos FIBC</a>
+        <a href="#catalog">Sacos de Polipropileno</a>
+        <a href="#catalog">Fundas y Liners</a>
+        <a href="#catalog">Eslingas</a>
+        <a href="#catalog">Ver Catálogo</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <a href="tel:+528183860000">+52 (81) 8386-0000</a>
+        <a href="tel:+19565000000">+1 (956) 500-0000</a>
+        <a href="mailto:ventas@SUPERSACOS.com.mx">ventas@SUPERSACOS.com.mx</a>
+        <a href="#">Apodaca, Nuevo León, MX</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 SUPERSACOS. Todos los derechos reservados.</span>
+      <span>Diseñado en Monterrey, Nuevo León, México</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP BTN -->
+<a href="https://wa.me/528183860000" target="_blank" id="wa-btn" title="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script>
+// ─── NAVBAR SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ─── HAMBURGER
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('nav-menu').classList.toggle('open');
+});
+
+// ─── HERO SLIDER
+let current = 0;
+const slidesEl = document.getElementById('slides');
+const totalSlides = 3;
+const dots = document.querySelectorAll('.dot');
+
+function goTo(n) {
+  current = (n + totalSlides) % totalSlides;
+  slidesEl.style.transform = `translateX(-${current * 100}%)`;
+  dots.forEach(d => d.classList.remove('active'));
+  dots[current].classList.add('active');
+}
+
+document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.index)));
+
+// Auto advance
+let autoPlay = setInterval(() => goTo(current + 1), 5500);
+document.getElementById('hero').addEventListener('mouseenter', () => clearInterval(autoPlay));
+document.getElementById('hero').addEventListener('mouseleave', () => {
+  autoPlay = setInterval(() => goTo(current + 1), 5500);
+});
+
+// ─── SCROLL ANIMATIONS
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// ─── COUNTER ANIMATION
+function animateCounter(el, target) {
+  let start = 0;
+  const duration = 2000;
+  const step = timestamp => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    el.textContent = Math.floor(progress * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(step);
+}
+
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const nums = e.target.querySelectorAll('.stat-number');
+      nums[0] && animateCounter(nums[0], 25);
+      nums[1] && animateCounter(nums[1], 24);
+      nums[2] && animateCounter(nums[2], 350);
+      statsObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+const statsSection = document.getElementById('stats');
+if (statsSection) statsObserver.observe(statsSection);
+</script>
+</body>
+</html>
